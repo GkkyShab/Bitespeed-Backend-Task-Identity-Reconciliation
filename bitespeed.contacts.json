@@ -1,0 +1,83 @@
+[{
+  "_id": {
+    "$oid": "6628a35523b7a1619bbbd8f0"
+  },
+  "id": 23,
+  "phoneNumber": "123456",
+  "email": "mcfly@hillvalley.edu",
+  "linkedId": 1,
+  "linkPrecedence": "secondary",
+  "createdAt": {
+    "$date": "2024-04-24T06:14:45.398Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-24T06:14:45.398Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6628a3c269d762f7fd6a1ad6"
+  },
+  "id": 1,
+  "phoneNumber": "123456",
+  "email": "lorraine@hillvalley.edu",
+  "linkPrecedence": "primary",
+  "createdAt": {
+    "$date": "2024-04-24T06:16:34.344Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-24T06:16:34.344Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6628a4e228ca90a999574222"
+  },
+  "id": 11,
+  "phoneNumber": "123456",
+  "email": "geo@hillvalley.edu",
+  "linkedId": 1,
+  "linkPrecedence": "secondary",
+  "createdAt": {
+    "$date": "2024-04-24T06:21:22.404Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-24T06:21:22.404Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6628a9cd831180ac92ea1c45"
+  },
+  "id": 12,
+  "phoneNumber": "919191",
+  "email": "george@hillvalley.edu",
+  "linkPrecedence": "primary",
+  "createdAt": {
+    "$date": "2024-04-24T06:42:21.847Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-24T06:42:21.847Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6628aade79a20a70e6e4e430"
+  },
+  "id": 27,
+  "phoneNumber": "717171",
+  "email": "biffsucks@hillvalley.edu",
+  "linkedId": 12,
+  "linkPrecedence": "secondary",
+  "createdAt": {
+    "$date": "2024-04-24T06:46:54.408Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-24T06:46:54.408Z"
+  },
+  "__v": 0
+}]
