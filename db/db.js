@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const mongoURL = 'mongodb://127.0.0.1:27017/bitespeed'; //Replace 'mydatabase' with your database name
+dotenv.config();
+const mongoURL = process.env.MONGO_URI; //Replace 'mydatabase' with your database name
 
 mongoose.connect(mongoURL);
 
