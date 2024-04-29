@@ -15,18 +15,19 @@ app.use(bodyParser.json());
 app.post("/identify", async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
+    const contact = await Contact.find(
+      { phoneNumber: phoneNumber } || { email: email }
+    );
 
-    // Find or create the contact
-    let contact = await Contact.findOne({ $or: [{ phoneNumber }, { email }] });
-
-    if (!contact) {
+    if (!contact.phoneNumber || !contact.email) {
+      const data = req.body;
       // If no contact exists, create a new primary contact
-      contact = new Contact(req.body);
-      await contact.save();
+      const newConstactUser = new Contact(data);
+      const response = await newConstactUser.save();
     }
 
     // Consolidate contacts
-    const primaryContactId = contact ? (contact.linkedId || contact.id) : null;
+    const primaryContactId = contact ? contact.linkedId || contact.id : null;
 
     const contacts = await Contact.find({ linkedId: primaryContactId });
 
