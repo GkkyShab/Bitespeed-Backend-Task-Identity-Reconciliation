@@ -4,7 +4,7 @@ const contactModel = new mongoose.Schema(
   {
     id: {
       type: Number,
-      required: true,
+      unique: true,
     },
     phoneNumber: {
       type: String,
@@ -12,6 +12,8 @@ const contactModel = new mongoose.Schema(
     },
     email: {
       type: String,
+      required: true,
+
     },
     linkedId: {
       type: Number,

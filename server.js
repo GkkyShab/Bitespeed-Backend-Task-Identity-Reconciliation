@@ -12,31 +12,52 @@ dotenv.config();
 app.use(bodyParser.json());
 
 // Identify endpoint
-app.post("/identify", async (req, res) => {
+app.post('/identify', async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
-    const contact = await Contact.find(
-      { phoneNumber: phoneNumber } || { email: email }
-    );
 
-    if (!contact.phoneNumber || !contact.email) {
-      const data = req.body;
+    // Find contacts matching the email or phone number
+    const contact = await Contact.findOne({
+      $or: [{ email }, { phoneNumber }]
+    });
+
+    if (!contact) {
       // If no contact exists, create a new primary contact
-      const newConstactUser = new Contact(data);
-      const response = await newConstactUser.save();
+      const newContact = new Contact({
+        phoneNumber,
+        email,
+        linkPrecedence: 'primary'
+      });
+      await newContact.save();
+
+      // Return the newly created contact as primary with empty secondary contact ids
+      return res.status(200).json({
+        contact: {
+          primaryContactId: newContact.id,
+          emails: [email],
+          phoneNumbers: [phoneNumber],
+          secondaryContactIds: []
+        }
+      });
     }
 
     // Consolidate contacts
-    const primaryContactId = contact ? contact.linkedId || contact.id : null;
+    const primaryContactId = contact.linkedId || contact.id;
 
-    const contacts = await Contact.find({ linkedId: primaryContactId });
+    // Fetch all contacts linked to the primary contact
+    const contacts = await Contact.find({
+      $or: [
+        { linkedId: primaryContactId },
+        { id: primaryContactId }
+      ]
+    });
 
-    const emails = new Set(); // Use a Set to store unique emails
-    const phoneNumbers = new Set(); // Use a Set to store unique phone numbers
+    const emails = new Set();
+    const phoneNumbers = new Set();
     const secondaryContactIds = [];
 
-    contacts.forEach((row) => {
-      if (row.linkPrecedence === "primary") {
+    contacts.forEach(row => {
+      if (row.linkPrecedence === 'primary') {
         emails.add(row.email);
         phoneNumbers.add(row.phoneNumber);
       } else {
@@ -46,6 +67,7 @@ app.post("/identify", async (req, res) => {
       }
     });
 
+    // Add the email and phone number from the request if they are unique
     if (email && !emails.has(email)) {
       emails.add(email);
     }
@@ -58,14 +80,15 @@ app.post("/identify", async (req, res) => {
         primaryContactId,
         emails: [...emails],
         phoneNumbers: [...phoneNumbers],
-        secondaryContactIds,
-      },
+        secondaryContactIds
+      }
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
