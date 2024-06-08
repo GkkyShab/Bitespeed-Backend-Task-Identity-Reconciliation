@@ -12,33 +12,25 @@ dotenv.config();
 app.use(bodyParser.json());
 
 // Identify endpoint
-app.post('/identify', async (req, res) => {
+app.post("/identify", async (req, res) => {
   try {
     const { email, phoneNumber } = req.body;
 
     // Find contacts matching the email or phone number
     const contact = await Contact.findOne({
-      $or: [{ email }, { phoneNumber }]
+      $or: [{ email }, { phoneNumber }],
     });
 
     if (!contact) {
-      // If no contact exists, create a new primary contact
-      const newContact = new Contact({
-        phoneNumber,
-        email,
-        linkPrecedence: 'primary'
-      });
-      await newContact.save();
+      const contact1 = await Contact.find({ email: email });
+      if (!contact1.phoneNumber || contact1.email) {
+        // If no contact exists, create a new primary contact
+        const newContact = new Contact(req.body);
+        await newContact.save();
 
-      // Return the newly created contact as primary with empty secondary contact ids
-      return res.status(200).json({
-        contact: {
-          primaryContactId: newContact.id,
-          emails: [email],
-          phoneNumbers: [phoneNumber],
-          secondaryContactIds: []
-        }
-      });
+        // Return the newly created contact as primary with empty secondary contact ids
+        return res.status(200).json({ meaasge: "Entry added successfully" });
+      }
     }
 
     // Consolidate contacts
@@ -46,18 +38,15 @@ app.post('/identify', async (req, res) => {
 
     // Fetch all contacts linked to the primary contact
     const contacts = await Contact.find({
-      $or: [
-        { linkedId: primaryContactId },
-        { id: primaryContactId }
-      ]
+      $or: [{ linkedId: primaryContactId }, { id: primaryContactId }],
     });
 
     const emails = new Set();
     const phoneNumbers = new Set();
     const secondaryContactIds = [];
 
-    contacts.forEach(row => {
-      if (row.linkPrecedence === 'primary') {
+    contacts.forEach((row) => {
+      if (row.linkPrecedence === "primary") {
         emails.add(row.email);
         phoneNumbers.add(row.phoneNumber);
       } else {
@@ -80,15 +69,14 @@ app.post('/identify', async (req, res) => {
         primaryContactId,
         emails: [...emails],
         phoneNumbers: [...phoneNumbers],
-        secondaryContactIds
-      }
+        secondaryContactIds,
+      },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // Start the server
 app.listen(PORT, () => {
